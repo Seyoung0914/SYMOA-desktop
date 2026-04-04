@@ -462,8 +462,10 @@ export function BoardPage() {
             await existing.setFocus();
             return;
         }
+        // dev/prod 모두 호환되는 URL
+        const baseUrl = window.location.origin;
         new WebviewWindow(label, {
-            url: `index.html?noteId=${noteId}`,
+            url: `${baseUrl}/?noteId=${noteId}`,
             title: 'SyncStick Memo',
             width: 320,
             height: 420,
@@ -478,9 +480,16 @@ export function BoardPage() {
 
     const getPreview = (content: string) => {
         if (!content.trim()) return 'New Note';
+        // innerText가 블록 요소 사이에 줄바꿈을 넣으려면 DOM에 실제로 붙여야 함
         const tmp = document.createElement('div');
+        tmp.style.position = 'absolute';
+        tmp.style.left = '-9999px';
+        tmp.style.whiteSpace = 'pre-wrap';
         tmp.innerHTML = content;
-        const text = tmp.innerText || tmp.textContent || '';
+        document.body.appendChild(tmp);
+        const text = tmp.innerText || '';
+        document.body.removeChild(tmp);
+        
         const firstLine = text.split('\n').find((l) => l.trim().length > 0)?.trim();
         if (!firstLine) return 'New Note';
         return firstLine.length > 30 ? firstLine.slice(0, 30) + '…' : firstLine;
