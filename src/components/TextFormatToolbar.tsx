@@ -163,6 +163,11 @@ export function TextFormatToolbar({ editorRef }: TextFormatToolbarProps) {
                     }
                     if (node && node.nodeName === 'LI') {
                         const li = node as HTMLElement;
+                        // Mark parent UL as checklist
+                        const parentUl = li.parentElement;
+                        if (parentUl && parentUl.tagName === 'UL') {
+                            parentUl.setAttribute('data-checklist', 'true');
+                        }
                         if (!li.querySelector('input[type="checkbox"]')) {
                             const checkbox = document.createElement('input');
                             checkbox.type = 'checkbox';
